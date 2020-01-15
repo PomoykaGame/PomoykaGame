@@ -10,6 +10,9 @@ class Scene1 extends Phaser.Scene {
     this.load.spritesheet('idle', 'assets/idle.png',
       { frameWidth: 160, frameHeight: 113.3 }
     )
+    this.load.spritesheet('if_fly', 'assets/in_fly.png',
+      { frameWidth: 160, frameHeight: 113.3 }
+    )
     this.load.image('prt1', 'http://labs.phaser.io/assets/particles/green.png');
     this.load.image('ground', 'assets/platform.png')
   }

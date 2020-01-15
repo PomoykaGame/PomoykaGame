@@ -52,6 +52,13 @@ class Scene2 extends Phaser.Scene {
       frameRate: 20,
       repeat: -1
     })
+
+    this.anims.create({
+      key: 'if_fly',
+      frames: this.anims.generateFrameNumbers('if_fly', { start: 0, end: 5 }),
+      frameRate: 20,
+      repeat: -1
+    })
  
   }
 
@@ -109,6 +116,10 @@ class Scene2 extends Phaser.Scene {
 
     if(this.player.body.onFloor())
         this.twice = 0
+
+    if(!this.player.body.onFloor())  {
+      this.player.anims.play('if_fly', true)
+    }  
   }
 
   doubleJump() {
