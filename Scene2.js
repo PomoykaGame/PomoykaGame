@@ -75,7 +75,7 @@ class Scene2 extends Phaser.Scene {
     //key D
     else if(this.key_D.isDown) {
       this.player.setVelocityX(220);
-      this.player.body.acceleration.x += this.acceleration;
+      this.player.body.acceleration.x = this.acceleration;
     }
 
     else {
