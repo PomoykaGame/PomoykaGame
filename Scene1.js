@@ -15,6 +15,7 @@ class Scene1 extends Phaser.Scene {
     )
     this.load.image('prt1', 'http://labs.phaser.io/assets/particles/green.png');
     this.load.image('ground', 'assets/platform.png')
+    this.load.image('enemy', 'assets/enemy1.png')
   }
 
   create() {

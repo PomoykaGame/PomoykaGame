@@ -59,7 +59,18 @@ class Scene2 extends Phaser.Scene {
       frameRate: 20,
       repeat: -1
     })
- 
+
+    this.input.keyboard.on('keydown_P', function () {
+      this.scale.toggleFullscreen()
+    }, this)
+
+    this.enemies = []
+    //enemies
+    //enemy(index, x, y, jumpX, jumpY, duration)
+    this.enemies.push(this.enemy(0, 500, 520, 0, 430, 1000))
+    this.enemies.push(this.enemy(1, 700, 520, 0, 430, 500))
+    this.enemies.push(this.enemy(2, 600, 360, 900, 0, 4000))
+
   }
 
   update(time, param2) {
@@ -120,6 +131,9 @@ class Scene2 extends Phaser.Scene {
     if(!this.player.body.onFloor())  {
       this.player.anims.play('if_fly', true)
     }  
+
+    this.touchEnemy()
+
   }
 
   doubleJump() {
@@ -132,6 +146,49 @@ class Scene2 extends Phaser.Scene {
         this.player.body.setVelocityY(-500);
       }
     }, this)
+  }
+
+  enemy = function(index, x, y, jumpX, jumpY, duration) {
+    this.enm = this.physics.add.sprite(x,y, 'enemy')
+    this.enm.setScale(-0.14, 0.14)
+    this.enm.name = index.toString()
+    this.physics.world.enable(this.enm)
+    this.enm.body.immovable = true
+    this.enm.body.collideWorldBounds = true
+    this.enm.setOffset(440,0)
+    
+    if(jumpX > 0) {
+      this.enm_tween = this.tweens.add({
+        targets: this.enm,
+        props: {
+          x: { value: jumpX.toString(), duration, ease: 'Power2' },
+        },
+        ease: 'Linear',       // 'Cubic', 'Elastic', 'Bounce', 'Back'
+        duration: 500,
+        repeat: -1,            // -1: infinity
+        yoyo: true
+     })
+    } else if( jumpY > 0 ) {
+      this.enm_tween = this.tweens.add({
+        targets: this.enm,
+        props: {
+          y: { value: jumpY.toString(), duration, ease: 'Quad.easeOut' }
+        },
+        ease: 'Linear',       // 'Cubic', 'Elastic', 'Bounce', 'Back'
+        duration: 500,
+        repeat: -1,            // -1: infinity
+        yoyo: true
+     })
+    }
+
+    return this.enm
+  }
+
+  touchEnemy() {
+      this.enemies.map( (enemy, index) => {
+        if(Math.abs(enemy.y - this.player.y) <= 30 && Math.abs(enemy.x - this.player.x) <= 30)
+          console.log('enemy ' + index + ' killed you)')
+      })
   }
 
 }
