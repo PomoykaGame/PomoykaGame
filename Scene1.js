@@ -4,9 +4,12 @@ class Scene1 extends Phaser.Scene {
   }
 
   preload() {
-    this.load.spritesheet('sprite1', 'assets/sprite1.png',
+    this.load.spritesheet('walk', 'assets/sprite1.png',
       { frameWidth: 160, frameHeight: 113.3 }
-    );
+    )
+    this.load.spritesheet('idle', 'assets/idle.png',
+      { frameWidth: 160, frameHeight: 113.3 }
+    )
     this.load.image('prt1', 'http://labs.phaser.io/assets/particles/green.png');
     this.load.image('ground', 'assets/platform.png')
   }
