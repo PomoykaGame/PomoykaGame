@@ -4,8 +4,8 @@ class Scene2 extends Phaser.Scene {
   }
 
   create() {
-    this.player = this.physics.add.sprite(100, 552, 'dude');
-
+    this.player = this.physics.add.sprite(100, 552, 'sprite1');
+    this.player.setScale(0.6)
     this.player.body.setGravityY(2500);
     this.player.setCollideWorldBounds(true);
 
@@ -27,6 +27,14 @@ class Scene2 extends Phaser.Scene {
     // })
 
     // this.emitter.startFollow(this.player)
+
+    this.anims.create({
+      key: 'right',
+      frames: this.anims.generateFrameNumbers('sprite1', { start: 0, end: 17 }),
+      frameRate: 10,
+      repeat: -1
+  });
+ 
   }
 
   update(time, param2) {
@@ -47,10 +55,14 @@ class Scene2 extends Phaser.Scene {
 
     if (this.cursors.left.isDown) {              //moving left
       this.player.setVelocityX(-200);
+      this.player.setScale(-0.6,0.6);
+      this.player.anims.play('right', true);
     }
 
     else if (this.cursors.right.isDown) {      //moving right
       this.player.setVelocityX(200);
+      this.player.setScale(0.6,0.6)
+      this.player.anims.play('right', true);
     }
 
     else {

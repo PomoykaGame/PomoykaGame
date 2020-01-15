@@ -4,8 +4,8 @@ class Scene1 extends Phaser.Scene {
   }
 
   preload() {
-    this.load.spritesheet('dude', 'assets/dude.png',
-      { frameWidth: 32, frameHeight: 48 }
+    this.load.spritesheet('sprite1', 'assets/sprite1.png',
+      { frameWidth: 160, frameHeight: 113.3 }
     );
     this.load.image('prt1', 'http://labs.phaser.io/assets/particles/green.png');
   }
