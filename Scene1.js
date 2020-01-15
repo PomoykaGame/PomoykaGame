@@ -8,6 +8,7 @@ class Scene1 extends Phaser.Scene {
       { frameWidth: 160, frameHeight: 113.3 }
     );
     this.load.image('prt1', 'http://labs.phaser.io/assets/particles/green.png');
+    this.load.image('ground', 'assets/platform.png')
   }
 
   create() {
