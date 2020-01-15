@@ -17,12 +17,12 @@ class Scene2 extends Phaser.Scene {
     this.physics.add.collider(this.platforms, this.player);
 
     this.player.setSize(80, 90)
-    this.player.setOffset(40, 8)
+    this.player.setOffset(32, 0)
+    this.player.setCircle(48);
 
     this.text = this.add.text(0, 0, "0", { fontFamily: '"Roboto Condensed"' });
 
     this.twice = 0
-    this.real_time
     this.h = 0;
     this.acceleration = 20;
     this.max_speed = 581;
@@ -49,12 +49,10 @@ class Scene2 extends Phaser.Scene {
 
   update(time, param2) {
     let c = (1000 / param2) / 60;
-    this.text.setText((c * 60).toFixed(0) + ' fps'); // show fps
+    this.text.setText((c * 60).toFixed(0) + ' fps') // show fps
+    this.cursors = this.input.keyboard.createCursorKeys()
 
-    this.real_time = time
-    this.cursors = this.input.keyboard.createCursorKeys();
-
-    if (this.cursors.up.isDown) {                  // jumping
+    if (this.cursors.up.isDown && this.player.body.onFloor()) {                  // jumping
       if (this.cursors.up.getDuration() < 400) {
         this.player.body.setVelocityY(this.player.body.velocity.y -= (23 / c))
       }
@@ -63,15 +61,24 @@ class Scene2 extends Phaser.Scene {
       }
     }
 
+    if (this.cursors.up.isDown) {                  // jumping
+      if (this.cursors.up.getDuration() < 400) {
+        this.player.body.setVelocityY(this.player.body.velocity.y -= (23 / c))
+      }
+      if (this.cursors.up.getDuration() >= 400 && this.twice < 2) {
+        this.player.body.setVelocityY(this.player.body.velocity.y += (10 / c))
+      }
+    }
+
     if (this.cursors.left.isDown) {              //moving left
       this.player.setVelocityX(-200);
       this.player.setScale(-0.5, 0.5);
-      this.player.setOffset(120,8)
+      this.player.setOffset(125,0)
       this.player.anims.play('right', true);
     }
 
     else if (this.cursors.right.isDown) {      //moving right
-      this.player.setOffset(40,8)
+      this.player.setOffset(32,0)
       this.player.setVelocityX(200);
       this.player.setScale(0.5, 0.5);
       this.player.anims.play('right', true);
@@ -80,15 +87,18 @@ class Scene2 extends Phaser.Scene {
     else {
       this.player.setVelocityX(0);
     }
+
+    if(this.player.body.onFloor())
+        this.twice = 0
   }
 
   doubleJump() {
     this.input.keyboard.on('keydown_UP', function () {
-      this.jump_started = this.real_time;
-      if (this.player.body.onFloor())
-        this.twice = 0;
-      if (this.twice < 2) {
-        this.twice++;
+      if(!this.player.body.onFloor() && this.twice === 0) {
+        this.twice+=2
+        this.player.body.setVelocityY(-500)
+      } else if(this.twice < 2) {
+        this.twice++
         this.player.body.setVelocityY(-500);
       }
     }, this)
