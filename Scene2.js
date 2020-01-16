@@ -29,6 +29,9 @@ class Scene2 extends Phaser.Scene {
     this.max_speed = 581;
     this.doubleJump();
 
+    this.max_velocity = 205;
+    this.normal_velocity = 175;
+
     // this.particles = this.add.particles('prt1');
 
     // this.emitter = this.particles.createEmitter({
@@ -97,19 +100,23 @@ class Scene2 extends Phaser.Scene {
     }
 
     if (this.cursors.left.isDown) {              //moving left
-      this.player.setVelocityX(-200);
+      this.player.setVelocityX(-this.normal_velocity);
       this.player.setScale(-0.5, 0.5);
       this.player.setOffset(125,0)
       this.player.anims.play('walk', true);
       this.is_left = true
+      if(this.normal_velocity <= this.max_velocity) this.normal_velocity+=0.2;
+      
     }
 
     else if (this.cursors.right.isDown) {      //moving right
       this.player.setOffset(32,0)
-      this.player.setVelocityX(200)
+      this.player.setVelocityX(this.normal_velocity)
       this.player.setScale(0.5, 0.5)
       this.player.anims.play('walk', true)
       this.is_left = false
+      if(this.normal_velocity <= this.max_velocity) this.normal_velocity+=0.2;
+      
     }
 
     else {
@@ -123,6 +130,8 @@ class Scene2 extends Phaser.Scene {
         this.player.setOffset(32,0)
       } 
       this.player.anims.play('idle', true)
+      this.normal_velocity = 175;
+      
     }
 
     if(this.player.body.onFloor())
