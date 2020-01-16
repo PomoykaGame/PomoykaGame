@@ -4,6 +4,7 @@ class Scene2 extends Phaser.Scene {
   }
 
   create() {
+    this.add.image(0, 0, 'background1').setOrigin(0).setScale(0.54);
     this.platforms = this.physics.add.staticGroup();
     this.platforms.create(400, 560, 'ground')
     this.platforms.create(700, 560, 'ground')
@@ -13,6 +14,11 @@ class Scene2 extends Phaser.Scene {
     this.player.body.setGravityY(2500);
     this.player.setCollideWorldBounds(true);
 
+    this.killEnemy();
+
+    this.hitbox = this.physics.add.sprite(120, 500);   
+    this.hitbox.body.setSize(10,30);
+
     this.enemy_with_hp = this.physics.add.sprite(300, 520, 'enemy')
     this.enemy_with_hp.setScale(0.15, 0.15)
     this.enemy_hp = 300
@@ -20,13 +26,17 @@ class Scene2 extends Phaser.Scene {
     this.health_color = 'hsl(0, 100%, 50%)'
     this.health = 1
     this.lifeBar = this.add.graphics();
+    this.lifeBar.setScale(2);
     this.redrawLifebar();
 
     this.physics.add.collider(this.platforms, this.player);
 
     this.player.setSize(45, 90)
 
-    this.text = this.add.text(0, 0, "0", { fontFamily: '"Roboto Condensed"' });
+    this.text = this.add.text(972, 0, "0", { fontFamily: '"Roboto Condensed"' });
+
+    this.text2 = this.add.text(10, 15, "Health : 100", { fontFamily: '"Roboto Condensed"' });
+    this.text2.setFontSize(25);
 
     this.is_left = false
 
@@ -50,18 +60,20 @@ class Scene2 extends Phaser.Scene {
     this.enemies = []
     //enemies
     //enemy(index, x, y, jumpX, jumpY, duration)
-    this.enemies.push(this.enemy(0, 500, 520, 0, 430, 1000))
+    this.enemies.push(this.enemy(0, 500, 520, 0, 0, 1000))
     this.enemies.push(this.enemy(1, 700, 520, 0, 430, 500))
     this.enemies.push(this.enemy(2, 600, 360, 900, 0, 4000))
-  }
+
+    this.physics.add.collider(this.player, this.enemies);
+    this.physics.add.collider(this.enemies, this.player);
+
+    this.lifeBar.x = 190
+    this.lifeBar.y = 155 }
 
   update(time, param2) {
     let c = (1000 / param2) / 60;
     this.text.setText((c * 60).toFixed(0) + ' fps') // show fps
     this.cursors = this.input.keyboard.createCursorKeys()
-
-    this.lifeBar.x = this.player.x - 1
-    this.lifeBar.y = this.player.y
 
     if (this.cursors.up.isDown && this.player.body.onFloor()) {     // jumping
       if (this.cursors.up.getDuration() < 400) {
@@ -81,7 +93,8 @@ class Scene2 extends Phaser.Scene {
       }
     }
 
-    if (this.cursors.left.isDown) {              //moving left
+    if (this.cursors.left.isDown) {     
+      this.hitbox.x = this.player.x-37;         //moving left
       this.player.setVelocityX(-this.normal_velocity);
       this.player.setScale(-0.5, 0.5);
       this.player.setOffset(96, 8)
@@ -90,7 +103,8 @@ class Scene2 extends Phaser.Scene {
       this.is_left = true
     }
 
-    else if (this.cursors.right.isDown) {      //moving right
+    else if (this.cursors.right.isDown) { 
+      this.hitbox.x = this.player.x+37;     //moving right
       this.player.setOffset(50, 8)
       this.player.setVelocityX(this.normal_velocity)
       this.player.setScale(0.5, 0.5)
@@ -123,7 +137,10 @@ class Scene2 extends Phaser.Scene {
         this.player.anims.play('if_fly', true)
     }
 
-    this.touchEnemy()
+    this.touchEnemy();
+
+    
+    this.hitbox.y = this.player.y;
 
   }
 
@@ -178,10 +195,10 @@ class Scene2 extends Phaser.Scene {
   touchEnemy() {
     this.enemies.map( (enemy, index) => {
       if(Math.abs(enemy.y - this.player.y) <= 30 && Math.abs(enemy.x - this.player.x) <= 30) {
-        console.log('health: ' + this.health)
         if(this.health > 0) {
           this.health -= 0.01
           this.health = this.health.toFixed(2)
+          this.text2.setText('Health : ' + this.health*100);
         }
         this.redrawLifebar()
       }
@@ -190,8 +207,8 @@ class Scene2 extends Phaser.Scene {
 
 redrawLifebar() {
   this.health_color = this.getColorForPercentage(this.health)
-  this.width = 50
-  this.height = -90
+  this.width = 180
+  this.height = -110
   this.lifeBar.clear()
   this.lifeBar.fillStyle(this.health_color, 1)
   this.lifeBar.fillRect(
@@ -245,6 +262,12 @@ fullColorHex(r,g,b) {
   attack() {
     this.input.keyboard.on('keydown_F', function () {
       if (!this.delay) {
+        this.enemies.map( (enemy, index) => {
+          if(enemy.x - this.hitbox.x <= 30 && enemy.y -this.hitbox.y <= 30){
+            // killEnemy();
+            console.log("yay");
+          }
+        })
         this.player.anims.play('attack', true)
         this.is_attack = true
         this.delay = true;
@@ -260,4 +283,7 @@ fullColorHex(r,g,b) {
     }, this)
   }
 
+  killEnemy(){
+    console.log("You killed enemy!");
+  }
 }

@@ -11,7 +11,7 @@ class Scene1 extends Phaser.Scene {
       { frameWidth: 160, frameHeight: 113 }
     )
     this.load.spritesheet('if_fly', 'assets/in_fly.png',
-      { frameWidth: 160, frameHeight: 113.3 }
+      { frameWidth: 160, frameHeight: 113 }
     )
     this.load.spritesheet('attack', 'assets/attack.png',
       { frameWidth: 160, frameHeight: 113 }
@@ -19,6 +19,7 @@ class Scene1 extends Phaser.Scene {
     this.load.image('prt1', 'http://labs.phaser.io/assets/particles/green.png');
     this.load.image('ground', 'assets/platform.png')
     this.load.image('enemy', 'assets/enemy1.png')
+    this.load.image('background1', 'assets/background1.png')
   }
 
   create() {
@@ -47,7 +48,7 @@ class Scene1 extends Phaser.Scene {
 
     this.anims.create({
       key: 'attack',
-      frames: this.anims.generateFrameNumbers('attack', { start: 0, end: 11 }),
+      frames: this.anims.generateFrameNumbers('attack', { start: 5, end: 11 }),
       frameRate: 20,
       repeat: -1
     })
