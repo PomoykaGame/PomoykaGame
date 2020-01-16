@@ -1,4 +1,5 @@
 class Scene2 extends Phaser.Scene {
+
   constructor() {
     super("playGame");
   }
@@ -23,12 +24,6 @@ class Scene2 extends Phaser.Scene {
     this.enemy_with_hp.setScale(0.15, 0.15)
     this.enemy_hp = 300
 
-    this.health_color = 'hsl(0, 100%, 50%)'
-    this.health = 1
-    this.lifeBar = this.add.graphics();
-    this.lifeBar.setScale(2);
-    this.redrawLifebar();
-
     this.physics.add.collider(this.platforms, this.player);
 
     this.player.setSize(45, 90)
@@ -48,11 +43,6 @@ class Scene2 extends Phaser.Scene {
 
     this.normal_velocity = 175;
 
-    this.is_attack = false
-    this.delay = false
-
-    this.attack();
-
     this.input.keyboard.on('keydown_P', function () {
       this.scale.toggleFullscreen()
     }, this)
@@ -65,10 +55,15 @@ class Scene2 extends Phaser.Scene {
     this.enemies.push(this.enemy(2, 600, 360, 900, 0, 4000))
 
     this.physics.add.collider(this.player, this.enemies);
-    this.physics.add.collider(this.enemies, this.player);
+    this.physics.add.collider(this.enemies, this.player)
 
-    this.lifeBar.x = 190
-    this.lifeBar.y = 155 }
+    //Healthbar
+    this.lifeBar = this.add.graphics()
+    this.hlth = new Healthbar(this.lifeBar)
+
+    //Attack
+    this.attack = new Attack(this.enemies, this.hitbox, this.input, this.player.anims)
+  }
 
   update(time, param2) {
     let c = (1000 / param2) / 60;
@@ -98,7 +93,7 @@ class Scene2 extends Phaser.Scene {
       this.player.setVelocityX(-this.normal_velocity);
       this.player.setScale(-0.5, 0.5);
       this.player.setOffset(96, 8)
-      if (this.is_attack === false)
+      if (this.attack.is_attack === false)
         this.player.anims.play('walk', true);
       this.is_left = true
     }
@@ -108,7 +103,7 @@ class Scene2 extends Phaser.Scene {
       this.player.setOffset(50, 8)
       this.player.setVelocityX(this.normal_velocity)
       this.player.setScale(0.5, 0.5)
-      if (this.is_attack === false)
+      if (this.attack.is_attack === false)
         this.player.anims.play('walk', true)
       this.is_left = false
     }
@@ -123,7 +118,7 @@ class Scene2 extends Phaser.Scene {
         this.player.setScale(0.5, 0.5)
         this.player.setOffset(50, 8)
       }
-      if (this.is_attack === false)
+      if (this.attack.is_attack === false)
         this.player.anims.play('idle', true)
     }
 
@@ -139,9 +134,7 @@ class Scene2 extends Phaser.Scene {
 
     this.touchEnemy();
 
-    
-    this.hitbox.y = this.player.y;
-
+    this.hitbox.y = this.player.y
   }
 
   doubleJump() {
@@ -195,92 +188,14 @@ class Scene2 extends Phaser.Scene {
   touchEnemy() {
     this.enemies.map( (enemy, index) => {
       if(Math.abs(enemy.y - this.player.y) <= 30 && Math.abs(enemy.x - this.player.x) <= 30) {
-        if(this.health > 0) {
-          this.health -= 0.01
-          this.health = this.health.toFixed(2)
-          this.text2.setText('Health : ' + this.health*100);
+        if(this.hlth.health > 0) {
+          this.hlth.health -= 0.01
+          this.hlth.health = this.hlth.health.toFixed(2)
+          this.text2.setText('Health : ' + Math.floor(this.hlth.health*100))
         }
-        this.redrawLifebar()
+        this.hlth.redrawLifebar()
       }
     })
-}
-
-redrawLifebar() {
-  this.health_color = this.getColorForPercentage(this.health)
-  this.width = 180
-  this.height = -110
-  this.lifeBar.clear()
-  this.lifeBar.fillStyle(this.health_color, 1)
-  this.lifeBar.fillRect(
-    -this.width / 2,
-    this.height / 2,
-    this.width * this.health,
-    8
-  );
-  this.lifeBar.setDepth(1)
-}
-
-getColorForPercentage = function(pct) {
-  let percentColors = [
-    { pct: 0.0, color: { r: 0xff, g: 0x00, b: 0 } },
-    { pct: 0.5, color: { r: 0xff, g: 0xff, b: 0 } },
-    { pct: 1.0, color: { r: 0x00, g: 0xff, b: 0 } } ];
-  for (var i = 1; i < percentColors.length - 1; i++) {
-      if (pct < percentColors[i].pct) {
-          break;
-      }
-  }
-  var lower = percentColors[i - 1];
-  var upper = percentColors[i];
-  var range = upper.pct - lower.pct;
-  var rangePct = (pct - lower.pct) / range;
-  var pctLower = 1 - rangePct;
-  var pctUpper = rangePct;
-  var color = {
-      r: Math.floor(lower.color.r * pctLower + upper.color.r * pctUpper),
-      g: Math.floor(lower.color.g * pctLower + upper.color.g * pctUpper),
-      b: Math.floor(lower.color.b * pctLower + upper.color.b * pctUpper)
-  };
-  return this.fullColorHex(color.r, color.g, color.b)
-} 
-
-rgbToHex(rgb) { 
-  var hex = Number(rgb).toString(16);
-  if (hex.length < 2) {
-       hex = "0" + hex;
-  }
-  return hex;
-};
-
-fullColorHex(r,g,b) {   
-  var red = this.rgbToHex(r);
-  var green = this.rgbToHex(g);
-  var blue = this.rgbToHex(b);
-  return '0x' + red+green+blue;
-}
-
-  attack() {
-    this.input.keyboard.on('keydown_F', function () {
-      if (!this.delay) {
-        this.enemies.map( (enemy, index) => {
-          if(enemy.x - this.hitbox.x <= 30 && enemy.y -this.hitbox.y <= 30){
-            // killEnemy();
-            console.log("yay");
-          }
-        })
-        this.player.anims.play('attack', true)
-        this.is_attack = true
-        this.delay = true;
-        let t = this
-        setTimeout(function () {
-          t.is_attack = false
-          t.player.anims.remove('attack');
-        }, 300)
-        setTimeout(function () {
-          t.delay = false;
-        }, 300)
-      }
-    }, this)
   }
 
   killEnemy(){
