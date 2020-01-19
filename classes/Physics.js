@@ -1,6 +1,6 @@
 class Physics {
 
-    constructor(enemies, hitbox, input, anims, player, attack, c) {
+    constructor(enemies, hitbox, input, anims, player, attack, c, is_left) {
         this.enemies = enemies
         this.hitbox = hitbox
         this.input = input
@@ -10,11 +10,11 @@ class Physics {
         this.is_attack = attack;
         this.normal_velocity = 175
         this.twice = 0
-        this.is_left = false
+        this.is_left = is_left;
         this.physics()
         this.doubleJump();
-        // this.attack();
     }
+
 
     physics() {
         this.cursors = this.input.keyboard.createCursorKeys()
@@ -52,8 +52,9 @@ class Physics {
             this.player.setOffset(50, 8)
             this.player.setVelocityX(this.normal_velocity)
             this.player.setScale(0.5, 0.5)
-            if (this.is_attack === false)
+            if (this.is_attack === false){
               this.anims.play('walk', true)
+            }
             this.is_left = false
           }
       

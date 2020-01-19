@@ -48,6 +48,8 @@ class Scene2 extends Phaser.Scene {
       this.scale.toggleFullscreen()
     }, this)
 
+    this.is_left = false;
+
     this.enemies = []
     //enemies
     //enemy(index, x, y, jumpX, jumpY, duration)
@@ -71,12 +73,12 @@ class Scene2 extends Phaser.Scene {
     let c = (1000 / param2) / 60;
     this.text.setText((c * 60).toFixed(0) + ' fps') // show fps
   
-    new Physics(this.enemies, this.hitbox, this.input, this.player.anims, this.player, this.is_attack, c)
+    this.physics = new Physics(this.enemies, this.hitbox, this.input, this.player.anims, this.player, this.is_attack, c, this.is_left);
+
+    this.is_left = this.physics.is_left
     
 
     this.touchEnemy();
-
-   
 
     
   }
