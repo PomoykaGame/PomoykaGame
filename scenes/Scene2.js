@@ -24,6 +24,9 @@ class Scene2 extends Phaser.Scene {
     this.enemy_with_hp.setScale(0.15, 0.15)
     this.enemy_hp = 300
 
+    this.is_attack = false
+    this.delay = false
+
     this.physics.add.collider(this.platforms, this.player);
 
     this.player.setSize(45, 90)
@@ -33,15 +36,13 @@ class Scene2 extends Phaser.Scene {
     this.text2 = this.add.text(10, 15, "Health : 100", { fontFamily: '"Roboto Condensed"' });
     this.text2.setFontSize(25);
 
-    this.is_left = false
 
-    this.twice = 0
     this.h = 0;
     this.acceleration = 20;
     this.max_speed = 581;
-    this.doubleJump();
+    // this.doubleJump();
 
-    this.normal_velocity = 175;
+    // this.normal_velocity = 175;
 
     this.input.keyboard.on('keydown_P', function () {
       this.scale.toggleFullscreen()
@@ -61,90 +62,47 @@ class Scene2 extends Phaser.Scene {
     this.lifeBar = this.add.graphics()
     this.hlth = new Healthbar(this.lifeBar)
 
-    //Attack
-    this.attack = new Attack(this.enemies, this.hitbox, this.input, this.player.anims)
+    
+    this.attack()
+    
   }
 
   update(time, param2) {
     let c = (1000 / param2) / 60;
     this.text.setText((c * 60).toFixed(0) + ' fps') // show fps
-    this.cursors = this.input.keyboard.createCursorKeys()
-
-    if (this.cursors.up.isDown && this.player.body.onFloor()) {     // jumping
-      if (this.cursors.up.getDuration() < 400) {
-        this.player.body.setVelocityY(this.player.body.velocity.y -= (23 / c))
-      }
-      if (this.cursors.up.getDuration() >= 400 && this.twice < 2) {
-        this.player.body.setVelocityY(this.player.body.velocity.y += 10)
-      }
-    }
-
-    if (this.cursors.up.isDown) {                  // jumping
-      if (this.cursors.up.getDuration() < 400) {
-        this.player.body.setVelocityY(this.player.body.velocity.y -= (23 / c))
-      }
-      if (this.cursors.up.getDuration() >= 400 && this.twice < 2) {
-        this.player.body.setVelocityY(this.player.body.velocity.y += (10 / c))
-      }
-    }
-
-    if (this.cursors.left.isDown) {     
-      this.hitbox.x = this.player.x-37;         //moving left
-      this.player.setVelocityX(-this.normal_velocity);
-      this.player.setScale(-0.5, 0.5);
-      this.player.setOffset(96, 8)
-      if (this.attack.is_attack === false)
-        this.player.anims.play('walk', true);
-      this.is_left = true
-    }
-
-    else if (this.cursors.right.isDown) { 
-      this.hitbox.x = this.player.x+37;     //moving right
-      this.player.setOffset(50, 8)
-      this.player.setVelocityX(this.normal_velocity)
-      this.player.setScale(0.5, 0.5)
-      if (this.attack.is_attack === false)
-        this.player.anims.play('walk', true)
-      this.is_left = false
-    }
-
-    else {
-      this.player.setVelocityX(0)
-      if (this.is_left) {
-        this.player.setScale(-0.5, 0.5)
-        this.player.setOffset(96, 8)
-      }
-      else {
-        this.player.setScale(0.5, 0.5)
-        this.player.setOffset(50, 8)
-      }
-      if (this.attack.is_attack === false)
-        this.player.anims.play('idle', true)
-    }
-
-    this.normal_velocity = 175;
-
-    if (this.player.body.onFloor())
-      this.twice = 0
-
-    if (!this.player.body.onFloor()) {
-      if (this.is_attack === false)
-        this.player.anims.play('if_fly', true)
-    }
+  
+    new Physics(this.enemies, this.hitbox, this.input, this.player.anims, this.player, this.is_attack, c)
+    
 
     this.touchEnemy();
 
-    this.hitbox.y = this.player.y
+   
+
+    
   }
 
-  doubleJump() {
-    this.input.keyboard.on('keydown_UP', function () {
-      if (!this.player.body.onFloor() && this.twice === 0) {
-        this.twice += 2
-        this.player.body.setVelocityY(-500)
-      } else if (this.twice < 2) {
-        this.twice++
-        this.player.body.setVelocityY(-500);
+
+
+  attack() {
+    this.input.keyboard.on('keydown_F', function () {
+      if (!this.delay) {
+        this.enemies.map( (enemy, index) => {
+          if(enemy.x - this.hitbox.x <= 30 && enemy.y -this.hitbox.y <= 30){
+            // killEnemy();
+            console.log("yay");
+          }
+        })
+        this.player.anims.play('attack', true)
+        this.is_attack = true
+        this.delay = true;
+        let t = this
+        setTimeout(function () {
+          t.is_attack = false
+          t.player.anims.remove('attack');
+        }, 300)
+        setTimeout(function () {
+          t.delay = false;
+        }, 300)
       }
     }, this)
   }
