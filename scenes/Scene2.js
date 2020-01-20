@@ -38,21 +38,25 @@ class Scene2 extends Phaser.Scene {
     this.is_left = false;
 
     this.enemies = this.physics.add.group();
-    this.enemies.create(400,500,'enemy').setScale(0.12);
+    this.enemies.create(400,400,'enemy').setScale(0.12);
     this.enemies.children.iterate(function(child){
       child.setGravityY(2500);
       child.setCollideWorldBounds(true);
-      child.setBounceX(1);
       child.setVelocityX(50);
+      child.setImmovable(true);
     })
     this.physics.add.collider(this.platforms, this.enemies);
+    this.enemies.children.iterate(function(child){
+      child.setImmovable(false);
+    })
     this.physics.add.collider(this.player, this.enemies);
+    
     
 
     //Healthbar
     this.lifeBar = this.add.graphics()
     this.hlth = new Healthbar(this.lifeBar)
-
+    // console.log(this.hitbox)
     
     this.attack = new Attack(this.enemies, this.hitbox, this.input, this.player.anims)
     

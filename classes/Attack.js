@@ -13,12 +13,13 @@ class Attack {
     attack() {
         this.input.keyboard.on('keydown_F', function () {
           if (!this.delay) {
+          
             this.enemies.children.iterate(function(child){
-              if(Math.abs(child.x - this.hitbox.x) <= 30 && Math.abs(child.y -this.hitbox.y <= 30)){
+              if(Math.abs(child.x - this.hitbox.x) <= 15 && Math.abs(child.y -this.hitbox.y <= 30)){
                 // killEnemy();
                 console.log("yay");
               }
-            })
+            }, this)
             this.anims.play('attack', true)
             this.is_attack = true
             this.delay = true;
