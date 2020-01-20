@@ -9,7 +9,7 @@ class Physics {
         this.c = c
         this.is_attack = attack;
         this.normal_velocity = 175
-        this.twice = 0
+        this.twice
         this.is_left = is_left;
         this.physics()
         this.doubleJump();
@@ -27,6 +27,7 @@ class Physics {
               this.player.body.setVelocityY(this.player.body.velocity.y += 10)
             }
           }
+          
       
           if (this.cursors.up.isDown) {                  // jumping
             if (this.cursors.up.getDuration() < 400) {
@@ -98,6 +99,8 @@ class Physics {
             this.twice++
             this.player.body.setVelocityY(-500);
           }
+        
+
         }, this)
       }
 

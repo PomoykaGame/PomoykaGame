@@ -24,8 +24,7 @@ class Scene2 extends Phaser.Scene {
     this.enemy_with_hp.setScale(0.15, 0.15)
     this.enemy_hp = 300
 
-    this.is_attack = false
-    this.delay = false
+   
 
     this.physics.add.collider(this.platforms, this.player);
 
@@ -40,9 +39,8 @@ class Scene2 extends Phaser.Scene {
     this.h = 0;
     this.acceleration = 20;
     this.max_speed = 581;
-    // this.doubleJump();
+    
 
-    // this.normal_velocity = 175;
 
     this.input.keyboard.on('keydown_P', function () {
       this.scale.toggleFullscreen()
@@ -65,7 +63,7 @@ class Scene2 extends Phaser.Scene {
     this.hlth = new Healthbar(this.lifeBar)
 
     
-    this.attack()
+    this.attack = new Attack(this.enemies, this.hitbox, this.input, this.player.anims)
     
   }
 
@@ -73,11 +71,12 @@ class Scene2 extends Phaser.Scene {
     let c = (1000 / param2) / 60;
     this.text.setText((c * 60).toFixed(0) + ' fps') // show fps
   
-    this.physics = new Physics(this.enemies, this.hitbox, this.input, this.player.anims, this.player, this.is_attack, c, this.is_left);
+    this.physics = new Physics(this.enemies, this.hitbox, this.input, this.player.anims, this.player, this.attack.is_attack, c, this.is_left);
 
     this.is_left = this.physics.is_left
-    
 
+    
+ 
     this.touchEnemy();
 
     
@@ -85,29 +84,6 @@ class Scene2 extends Phaser.Scene {
 
 
 
-  attack() {
-    this.input.keyboard.on('keydown_F', function () {
-      if (!this.delay) {
-        this.enemies.map( (enemy, index) => {
-          if(enemy.x - this.hitbox.x <= 30 && enemy.y -this.hitbox.y <= 30){
-            // killEnemy();
-            console.log("yay");
-          }
-        })
-        this.player.anims.play('attack', true)
-        this.is_attack = true
-        this.delay = true;
-        let t = this
-        setTimeout(function () {
-          t.is_attack = false
-          t.player.anims.remove('attack');
-        }, 300)
-        setTimeout(function () {
-          t.delay = false;
-        }, 300)
-      }
-    }, this)
-  }
 
   enemy(index, x, y, jumpX, jumpY, duration) {
     this.enm = this.physics.add.sprite(x, y, 'enemy')
