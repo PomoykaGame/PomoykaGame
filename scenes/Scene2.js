@@ -38,35 +38,109 @@ class Scene2 extends Phaser.Scene {
     this.is_left = false;
 
     this.enemies = this.physics.add.group();
-    this.enemies.create(400,500,'enemy').setScale(0.12);
+    this.enemy1 = this.enemies.create(400,500,'enemy').setScale(0.12);
     this.enemies.children.iterate(function(child){
       child.setGravityY(2500);
       child.setCollideWorldBounds(true);
       child.setBounceX(1);
       child.setVelocityX(50);
     })
-    this.physics.add.collider(this.platforms, this.enemies);
-    this.physics.add.collider(this.player, this.enemies);
-    
+    this.physics.add.collider(this.enemies, this.platforms)
+    this.physics.add.collider(this.player, this.enemies, this.touchEnemy, null, this);
+    this.isDamaged = false;
 
     //Healthbar
     this.lifeBar = this.add.graphics()
     this.hlth = new Healthbar(this.lifeBar)
-
-    
     this.attack = new Attack(this.enemies, this.hitbox, this.input, this.player.anims)
-    
+
+    this.dash_is_available = true
+    this.dash_is_playing = false
+    this.dashOn()
+    this.phcs = new Physics(this.input, this.player.anims, this.player)
   }
 
   update(time, param2) {
-    let c = (1000 / param2) / 60;
+    let c = (1000 / param2) / 60
+    this.phcs.dash_is_playing = this.dash_is_playing
+    this.phcs.enemies = this.enemies
+    this.phcs.hitbox = this.hitbox
+    this.phcs.is_attack = this.attack.is_attack
+    this.phcs.is_left = this.is_left
+    this.phcs.isDamaged = this.isDamaged
+    this.phcs.physics(c)
     this.text.setText((c * 60).toFixed(0) + ' fps') // show fps
-  
-    this.physics = new Physics(this.enemies, this.hitbox, this.input, this.player.anims, this.player, this.attack.is_attack, c, this.is_left);
-
-    this.is_left = this.physics.is_left
- 
+    this.is_left = this.phcs.is_left
     // this.touchEnemy();
   }
+
+  touchEnemy() {
+    if (!this.isDamaged) {
+      this.isDamaged = true
+      if(this.player.x < this.enemy1.x) {
+        this.player.body.velocity.x = -200;
+        this.player.body.velocity.y = -450;
+      } else {
+        this.player.body.velocity.x = 200;
+        this.player.body.velocity.y = -450;
+      }
+      this.player.setTint(0xff0000);
+
+      let t = this;
+
+      setTimeout(function () {
+        t.isDamaged = false;
+        t.player.body.velocity.x = 0;
+        t.player.body.velocity.y = 0;
+        t.player.clearTint();
+      }, 430)
+
+      this.hlth.health -= 0.25
+      this.hlth.health = this.hlth.health.toFixed(2)
+      this.text2.setText('Health : ' + Math.floor(this.hlth.health * 100))
+      this.hlth.redrawLifebar();
+    }
+  }
+
+  async delay(ms) {
+    return new Promise(async(resolve) => {
+      setTimeout(function(){resolve()}, ms)
+    }) 
+  }
+
+  dashOn() {
+    //dash left
+    this.input.keyboard.on('keydown_Z', async function () {
+        if(this.dash_is_available) {
+          this.dash_is_available = false
+          this.dash_is_playing = true
+          this.player.setVelocityX(-700)
+          this.player.setVelocityY(0)
+          this.player.body.setGravityY(0)
+          await this.delay(250)
+          this.player.body.setVelocityX(0)
+          this.dash_is_playing = false
+          this.player.body.setGravityY(2500)
+          setTimeout(() => this.dash_is_available = true, 1000)
+        }
+    }, this)
+    //dash right
+    this.input.keyboard.on('keydown_X', async function () {
+        if(this.dash_is_available) {
+          this.dash_is_available = false
+          this.dash_is_playing = true
+          this.player.body.setVelocityX(700)
+          this.player.setVelocityY(0)
+          this.player.body.setGravityY(0)
+          await this.delay(250)
+          this.player.body.setVelocityX(0)
+          this.dash_is_playing = false
+          this.player.body.setGravityY(2500)
+          setTimeout(() => this.dash_is_available = true, 1000)
+        }
+    }, this)
+  }
+
+  
 
 }

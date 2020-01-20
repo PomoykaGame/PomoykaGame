@@ -52,6 +52,7 @@ class Scene1 extends Phaser.Scene {
       frameRate: 20,
       repeat: -1
     })
+
   }
   
   
