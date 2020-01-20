@@ -13,8 +13,8 @@ class Attack {
     attack() {
         this.input.keyboard.on('keydown_F', function () {
           if (!this.delay) {
-            this.enemies.map( (enemy, index) => {
-              if(enemy.x - this.hitbox.x <= 30 && enemy.y -this.hitbox.y <= 30){
+            this.enemies.children.iterate(function(child){
+              if(Math.abs(child.x - this.hitbox.x) <= 30 && Math.abs(child.y -this.hitbox.y <= 30)){
                 // killEnemy();
                 console.log("yay");
               }
