@@ -112,6 +112,7 @@ class Scene2 extends Phaser.Scene {
     //dash left
     this.input.keyboard.on('keydown_Z', async function () {
         if(this.dash_is_available) {
+          this.is_left = true
           this.dash_is_available = false
           this.dash_is_playing = true
           this.player.setVelocityX(-700)
@@ -127,6 +128,7 @@ class Scene2 extends Phaser.Scene {
     //dash right
     this.input.keyboard.on('keydown_X', async function () {
         if(this.dash_is_available) {
+          this.is_left = false
           this.dash_is_available = false
           this.dash_is_playing = true
           this.player.body.setVelocityX(700)
