@@ -10,9 +10,9 @@ const config = {
   pixelArt: false,
   physics: {
     default: "arcade",
-    arcade:{
-        debug: true,
-        debugShowVelocity: true
+    arcade: {
+      debug: true,
+      debugShowVelocity: false
     }
   }
 }
