@@ -60,7 +60,7 @@ class Scene2 extends Phaser.Scene {
     //Healthbar
     this.lifeBar = this.add.graphics()
     this.hlth = new Healthbar(this.lifeBar, false)
-    this.attack = new Attack(this.enemies, this.hitbox, this.input, this.player.anims, this.enemy_hlth)
+    this.attack = new Attack(this.enemies, this.hitbox, this.input, this.player.anims, this.enemy_hlth, this.player)
 
     this.phcs = new Physics(this.input, this.player.anims, this.player)
     this.physics.add.overlap(this.player, this.enemies, this.phcs.touchEnemy, null, this)

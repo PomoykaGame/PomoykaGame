@@ -101,14 +101,18 @@ class Physics {
   touchEnemy() {
     if (!this.isDamaged) {
       this.isDamaged = true
-      if (this.player.x < this.enemy1.x) {
-        this.player.body.velocity.x = -200
-        this.player.body.velocity.y = -450
-      } else {
-        this.player.body.velocity.x = 200
-        this.player.body.velocity.y = -450
-      }
-      this.player.setTint(0xff0000)
+      this.enemies.children.iterate(function (child) {
+        if (Math.abs(this.player.x - child.x < 60)) {
+          if (this.player.x < child.x) {
+            this.player.body.velocity.x = -200
+            this.player.body.velocity.y = -450
+          } else {
+            this.player.body.velocity.x = 200
+            this.player.body.velocity.y = -450
+          }
+        }
+        this.player.setTint(0xff0000)
+      }, this);
 
       let t = this
 

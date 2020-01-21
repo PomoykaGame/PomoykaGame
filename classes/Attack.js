@@ -1,6 +1,6 @@
 class Attack {
 
-  constructor(enemies, hitbox, input, anims, enemy_hlth) {
+  constructor(enemies, hitbox, input, anims, enemy_hlth, player) {
     this.enemies = enemies
     this.hitbox = hitbox
     this.input = input
@@ -8,6 +8,7 @@ class Attack {
     this.is_attack = false
     this.delay = false
     this.enemy_hlth = enemy_hlth
+    this.player = player;
     this.attack();
   }
 
@@ -16,6 +17,20 @@ class Attack {
       if (!this.delay) {
         this.enemies.children.iterate(function (child, i) {
           if (Math.abs(child.x - this.hitbox.x) <= 15 && Math.abs(child.y - this.hitbox.y) < 24) {
+            let currSpeed = child.body.velocity.x;
+            if (this.player.x < child.x) {
+              child.body.velocity.x = 100
+              child.body.velocity.y = -250
+            } else {
+              child.body.velocity.x = -100
+              child.body.velocity.y = -250
+            }
+            child.setTint(0xff0000)
+            setTimeout(function () {
+              child.body.velocity.x = currSpeed;
+              child.body.velocity.y = 0;
+              child.clearTint();
+            }, 300)
             this.enemy_hlth[i].health -= 0.2
             this.enemy_hlth[i].changed = true
           }
