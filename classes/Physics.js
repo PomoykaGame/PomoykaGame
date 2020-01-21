@@ -18,15 +18,6 @@ class Physics {
     physics(c) {
           this.cursors = this.input.keyboard.createCursorKeys()
 
-          if (this.cursors.up.isDown && this.player.body.onFloor() && this.dash_is_playing === false && !this.isDamaged) {     // jumping
-            if (this.cursors.up.getDuration() < 400) {
-              this.player.body.setVelocityY(this.player.body.velocity.y -= (23 / c))
-            }
-            if (this.cursors.up.getDuration() >= 400 && this.twice < 2) {
-              this.player.body.setVelocityY(this.player.body.velocity.y += 10)
-            }
-          }
-      
           if (this.cursors.up.isDown && this.dash_is_playing === false && !this.isDamaged) {                  // jumping
             if (this.cursors.up.getDuration() < 400) {
               this.player.body.setVelocityY(this.player.body.velocity.y -= (23 / c))
@@ -104,4 +95,5 @@ class Physics {
           }
         }, this)
       }
+
 }

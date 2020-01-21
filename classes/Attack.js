@@ -1,12 +1,13 @@
 class Attack {
 
-    constructor(enemies, hitbox, input, anims) {
+    constructor(enemies, hitbox, input, anims, enemy_hlth) {
         this.enemies = enemies
         this.hitbox = hitbox
         this.input = input
         this.anims = anims
         this.is_attack = false
         this.delay = false
+        this.enemy_hlth = enemy_hlth
         this.attack();
     }
 
@@ -16,6 +17,8 @@ class Attack {
             this.enemies.children.iterate(function(child){
               if(Math.abs(child.x - this.hitbox.x) <= 15 && Math.abs(child.y -this.hitbox.y <= 15)){
                 // killEnemy();
+                this.enemy_hlth.child.health -= 0.2
+                this.enemy_hlth.child.changed = true
                 console.log("yay");
               }
             }, this)

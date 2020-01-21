@@ -1,29 +1,55 @@
 class Healthbar {
 
-    constructor(lifeBar) {
+    constructor(lifeBar, isEnemy) {
         this.lifeBar = lifeBar
-        this.lifeBar.setScale(2);
+        this.lifeBar.setScale(2)
         this.lifeBar.x = 190
-        this.lifeBar.y = 155 
+        this.lifeBar.y = 155
         this.health_color = 'hsl(0, 100%, 50%)'
         this.health = 1
-        this.redrawLifebar();
+        if(!isEnemy)
+          this.redrawLifebar()
+        else 
+          this.enemyRedrawLifebar()  
     }
 
     redrawLifebar() {
+        if(this.health <= 0) {
+          this.lifeBar.clear()
+        } else {
+          this.health_color = this.getColorForPercentage(this.health)
+          this.width = 180
+          this.height = -110
+          this.lifeBar.clear()
+          this.lifeBar.fillStyle(this.health_color, 1)
+          this.lifeBar.fillRect(
+            -this.width / 2,
+            this.height / 2,
+            this.width * this.health,
+            8
+          );
+          this.lifeBar.setDepth(1)
+        }
+    }
+
+    enemyRedrawLifebar() {
+      if(this.health <= 0) {
+        this.lifeBar.clear()
+      } else {
         this.health_color = this.getColorForPercentage(this.health)
-        this.width = 180
-        this.height = -110
+        this.width = 20
+        this.height = -40
         this.lifeBar.clear()
         this.lifeBar.fillStyle(this.health_color, 1)
         this.lifeBar.fillRect(
           -this.width / 2,
           this.height / 2,
           this.width * this.health,
-          8
+          3
         );
         this.lifeBar.setDepth(1)
       }
+    }
       
       getColorForPercentage = function(pct) {
         let percentColors = [
