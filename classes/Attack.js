@@ -15,8 +15,7 @@ class Attack {
         this.input.keyboard.on('keydown_F', function () {
           if (!this.delay) {
             this.enemies.children.iterate(function(child){
-              if(Math.abs(child.x - this.hitbox.x) <= 15 && Math.abs(child.y -this.hitbox.y <= 15)){
-                // killEnemy();
+              if(Math.abs(child.x - this.hitbox.x) <= 15 && Math.abs(child.y -this.hitbox.y) < 24){
                 this.enemy_hlth.child.health -= 0.2
                 this.enemy_hlth.child.changed = true
                 console.log("yay");
