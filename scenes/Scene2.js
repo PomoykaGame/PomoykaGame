@@ -7,9 +7,14 @@ class Scene2 extends Phaser.Scene {
   create() {
     this.add.image(0, 0, 'background1').setOrigin(0).setScale(0.54);
     this.platforms = this.physics.add.staticGroup();
-    this.platforms.create(400, 560, 'ground')
-    this.platforms.create(700, 560, 'ground')
-    this.platforms.create(700, 400, 'ground').setScale(0.5).refreshBody()
+    this.platforms.create(90, 560, 'ground').setScale(0.5).refreshBody()
+    this.platforms.create(270, 560, 'ground').setScale(0.5).refreshBody()
+    this.platforms.create(450, 560, 'ground').setScale(0.5).refreshBody()
+    this.platforms.create(630, 560, 'ground').setScale(0.5).refreshBody()
+    this.platforms.create(810, 560, 'ground').setScale(0.5).refreshBody()
+    this.platforms.create(990, 560, 'ground').setScale(0.5).refreshBody()
+    this.platforms.create(630, 410, 'ground').setScale(0.5).refreshBody()
+    this.platforms.create(810, 410, 'ground').setScale(0.5).refreshBody()
 
     this.player = this.physics.add.sprite(100, 0, 'idle')
     this.player.body.setGravityY(2500)
@@ -35,7 +40,7 @@ class Scene2 extends Phaser.Scene {
     this.enemy_hlth_changed = []
 
     this.enemies = this.physics.add.group();
-    this.enemy1 = this.enemies.create(400, 500, 'enemy').setScale(0.12);
+    this.enemy1 = this.enemies.create(400, 485, 'enemy').setScale(0.12);
     this.enemy2 = this.enemies.create(600, 500, 'enemy').setScale(0.12);
     this.enemies.children.iterate(function (child, i) {
       this.lifeBar_enemy[i] = this.add.graphics()
@@ -46,6 +51,8 @@ class Scene2 extends Phaser.Scene {
       child.setCollideWorldBounds(true)
       child.setBounceX(1)
       child.setVelocityX(50)
+      child.setSize(250, 310)
+      child.setOffset(100, 70)
     }, this)
     this.physics.add.collider(this.enemies, this.platforms)
     this.isDamaged = false;
@@ -69,17 +76,17 @@ class Scene2 extends Phaser.Scene {
     this.text.setText((c * 60).toFixed(0) + ' fps') // show fps
 
     this.enemies.children.iterate(function (child, i) {
-      if(child===undefined){
+      if (child === undefined) {
         console.log("asd")
-      }else{
+      } else {
         this.lifeBar_enemy[i].x = child.x
         this.lifeBar_enemy[i].y = child.y
-      if (this.enemy_hlth[i].changed)
-        this.enemy_hlth[i].enemyRedrawLifebar()
-      if (this.enemy_hlth[i].health <= 0.05) {
-        child.disableBody(true,true)
+        if (this.enemy_hlth[i].changed)
+          this.enemy_hlth[i].enemyRedrawLifebar()
+        if (this.enemy_hlth[i].health <= 0.05) {
+          child.disableBody(true, true)
+        }
       }
-    }
     }, this)
   }
 }
